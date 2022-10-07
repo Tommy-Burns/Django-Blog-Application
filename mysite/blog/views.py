@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render
-
-from .forms import EmailPostForm
+from django.views.decorators.http import require_POST
+from .forms import CommentForm, EmailPostForm
 from .models import Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
@@ -33,8 +33,14 @@ def post_detail(request, year, month, day, post):
                              publish__month=month,
                              publish__day=day
                              )
+    
+    comments = post.comments.filter(active=True)
+    form = CommentForm()
+    
     return render(request, 'blog/post/detail.xhtml', {
         'post': post,
+        'form': form,
+        'comments': comments,
     })
 
 
@@ -65,3 +71,21 @@ class PostListView(ListView):
     context_object_name = 'posts'
     paginate_by = 3
     template_name = 'blog/post/list.xhtml'
+    
+
+@require_POST
+def post_comment(request, post_id):
+    post = get_object_or_404(Post, id=post_id, status=Post.Status.PUBLISHED)
+    comment = None
+    
+    form = CommentForm(data=request.POST)
+    if form.is_valid():
+        # Create a comment object without saving it to database
+        comment = form.save(commit=False)
+        comment.post = post
+        comment.save()
+    return render(request, 'blog/post/comment.xhtml', {
+        'post': post,
+        'form': form,
+        'comment': comment,
+    })
