@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
-
+from taggit.managers import TaggableManager
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
@@ -23,7 +23,7 @@ class Post(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=2, choices=Status.choices, default=Status.DRAFT)
-    
+    tags = TaggableManager()
     
     objects = models.Manager()
     published = PublishedManager()
@@ -33,7 +33,7 @@ class Post(models.Model):
         ordering = ['-publish']
         indexes = [models.Index(fields=['-publish'])]
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.title
     
     def get_absolute_url(self):
