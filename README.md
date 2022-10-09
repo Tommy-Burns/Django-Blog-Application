@@ -41,4 +41,4 @@ while True:
 ```
 ## Author
 
-- LinkedIn - [Thomas Burns Botchwey](www.linkedin.com/in/thomas-burns-botchwey-4a4315201)
+- LinkedIn - [Thomas Burns Botchwey](www.linkedin.com/in/tbbotchwey)
